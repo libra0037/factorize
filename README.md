@@ -1,4 +1,4 @@
-###My modified version of Barrett reduction
+### My modified version of Barrett reduction
 
 If $n\in[2^{r-1},2^r)$, $a\in[0,2^{2r})$, let $n'=\left\lfloor\dfrac{2^{2r+1}}{n}\right\rfloor$, $a_1=\left\lfloor\dfrac{a}{2^{r-2}}\right\rfloor$, $k=\left\lfloor\dfrac{a_1n'}{2^{r+3}}\right\rfloor$, we have $k\le\dfrac{a}{n}\lt k+2$, then $a-nk$ equals either $(a\bmod n)$ or $(a\bmod n)+n$.
 
