@@ -1,4 +1,4 @@
-﻿#include <iostream>
+#include <iostream>
 #include <random>
 #include <intrin.h>
 using ULL = uint64_t;
@@ -36,9 +36,9 @@ ULL gcd(ULL a, ULL b)
 struct Barrett
 {
 	ULL n, ni; int r;
-	Barrett(ULL _n): n(_n), r(bsr(_n))
+	Barrett(ULL _n): n(_n), r(bsr(_n) + 1)
 	{
-		int r2 = r * 2 + 3;
+		int r2 = r * 2 + 1;
 		ULL k0 = r2 < 64 ? 1ULL << r2 : 0;
 		ULL k1 = r2 < 64 ? 0 : 1ULL << (r2 - 64);
 		ni = div64(k0, k1, n);
@@ -46,14 +46,15 @@ struct Barrett
 	ULL rnd()const
 	{
 		static std::mt19937_64 gen(std::random_device{}());
-		ULL mask = (2ULL << r) - 1, a;
+		ULL mask = (1ULL << r) - 1, a;
 		do a = gen() & mask; while(a >= n);
 		return a;
 	}
 	ULL redu(ULL t0, ULL t1)const
 	{
-		ULL k1, k0 = _umul128(__shiftright128(t0, t1, r - 1), ni, &k1);
-		t0 -= __shiftright128(k0, k1, r + 4) * n;
+		ULL k1, k0 = _umul128(__shiftright128(t0, t1, r - 2), ni, &k1);
+		k0 = r < 61 ? __shiftright128(k0, k1, r + 3) : k1 >> (r - 61);
+		t0 -= k0 * n;
 		return t0 < n ? t0 : t0 - n;
 	}
 	ULL operator()(ULL a, ULL b)const
@@ -119,8 +120,9 @@ int main()
 	{
 		ULL n;
 		std::cin >> n;
-		if(n < 2)return 0;
-		for(ULL p : Factorize(n))std::cout << p << ' ';
+		if(n < 2 || n > 1ULL << 62)return 0;
+		std::cout << "Factors:";
+		for(ULL p : Factorize(n))std::cout << ' ' << p;
 		std::cout << std::endl;
 	}
 }
